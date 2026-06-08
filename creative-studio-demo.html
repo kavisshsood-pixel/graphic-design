@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prism Studio — Graphic Design</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+
+:root{
+  --cream:#faf7f2;
+  --warm:#f0ebe0;
+  --ink:#1a1410;
+  --ink2:#4a4035;
+  --ink3:#9a8f80;
+  --rust:#c0390a;
+  --rust2:#e04010;
+  --sage:#3a6b50;
+  --gold:#d4900a;
+  --sky:#1a4a7a;
+  --rose:#b03060;
+  --serif:'Playfair Display',serif;
+  --sans:'Outfit',sans-serif;
+  --mono:'Space Mono',monospace;
+}
+
+body{
+  font-family:var(--sans);
+  background:var(--cream);
+  color:var(--ink);
+  overflow-x:hidden;
+  cursor:none;
+}
+
+/* ── CUSTOM CURSOR ── */
+#cursor{
+  position:fixed;width:12px;height:12px;border-radius:50%;
+  background:var(--rust);pointer-events:none;z-index:99999;
+  transition:transform 0.15s ease,width 0.3s,height 0.3s,background 0.3s;
+  transform:translate(-50%,-50%);mix-blend-mode:multiply
+}
+#cursor-ring{
+  position:fixed;width:40px;height:40px;border-radius:50%;
+  border:1px solid rgba(192,57,10,0.4);pointer-events:none;z-index:99998;
+  transform:translate(-50%,-50%);transition:all 0.12s ease;
+}
+body:hover #cursor{width:14px;height:14px}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.4rem 4rem;
+  mix-blend-mode:multiply;
+}
+.nav-logo{
+  font-family:var(--serif);font-size:1.3rem;font-weight:900;
+  color:var(--ink);text-decoration:none;letter-spacing:-0.3px;font-style:italic
+}
+.nav-logo span{font-style:normal;color:var(--rust)}
+.nav-links{display:flex;gap:2.5rem;list-style:none}
+.nav-links a{
+  font-size:0.75rem;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--ink2);text-decoration:none;transition:color 0.2s
+}
+.nav-links a:hover{color:var(--rust)}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;
+  display:grid;grid-template-columns:1fr 1fr;
+  position:relative;overflow:hidden;
+}
+
+/* left panel */
+.hero-left{
+  background:var(--ink);
+  display:flex;flex-direction:column;
+  justify-content:flex-end;
+  padding:9rem 4rem 4rem;
+  position:relative;overflow:hidden;
+}
+
+/* animated SVG illustration in left panel */
+.hero-illustration{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  opacity:0.12
+}
+
+.hero-left h1{
+  font-family:var(--serif);font-size:clamp(3.5rem,6vw,6rem);
+  font-weight:900;line-height:0.9;color:#faf7f2;
+  letter-spacing:-2px;position:relative;z-index:1;margin-bottom:1.5rem
+}
+.hero-left h1 em{
+  display:block;color:var(--rust2);font-style:italic
+}
+.hero-left p{
+  font-size:0.85rem;color:rgba(250,247,242,0.55);line-height:1.8;
+  max-width:320px;position:relative;z-index:1;font-weight:300
+}
+
+/* right panel */
+.hero-right{
+  background:var(--cream);
+  display:flex;flex-direction:column;
+  align-items:flex-start;justify-content:center;
+  padding:9rem 4rem 4rem;
+  position:relative;overflow:hidden;
+}
+
+.hero-right-tag{
+  font-family:var(--mono);font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--rust);margin-bottom:2rem;display:flex;align-items:center;gap:0.6rem
+}
+.hero-right-tag::before{
+  content:'';width:24px;height:1px;background:var(--rust)
+}
+
+.service-pills{display:flex;flex-direction:column;gap:0.6rem;margin-bottom:3rem}
+.pill{
+  display:inline-flex;align-items:center;gap:0.8rem;
+  font-size:1.1rem;font-weight:500;color:var(--ink);
+  padding:0.6rem 0;border-bottom:1px solid var(--warm);
+  transition:all 0.3s;cursor:default;
+}
+.pill:hover{color:var(--rust);border-color:var(--rust);transform:translateX(8px)}
+.pill-dot{width:8px;height:8px;border-radius:50%;background:var(--rust);flex-shrink:0;
+  transition:transform 0.3s}
+.pill:hover .pill-dot{transform:scale(1.5)}
+
+.hero-cta-row{display:flex;gap:1rem;align-items:center}
+.btn-fill{
+  display:inline-block;font-family:var(--mono);font-size:0.72rem;
+  letter-spacing:0.1em;text-transform:uppercase;
+  padding:0.85rem 2rem;background:var(--rust);color:#fff;
+  text-decoration:none;transition:all 0.2s;border:none;cursor:pointer
+}
+.btn-fill:hover{background:var(--ink)}
+.btn-text{
+  font-family:var(--mono);font-size:0.72rem;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--ink3);text-decoration:none;
+  display:flex;align-items:center;gap:0.4rem;transition:color 0.2s
+}
+.btn-text:hover{color:var(--rust)}
+
+/* floating stat boxes */
+.hero-stat-box{
+  position:absolute;
+  background:#fff;border:1px solid var(--warm);
+  padding:1rem 1.25rem;
+  animation:float 6s ease-in-out infinite
+}
+.hsb1{bottom:6rem;right:2rem;animation-delay:0s}
+.hsb2{top:10rem;right:5rem;animation-delay:2s}
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-10px)}
+}
+.stat-big{
+  font-family:var(--serif);font-size:2rem;font-weight:900;
+  color:var(--ink);line-height:1
+}
+.stat-small{
+  font-family:var(--mono);font-size:0.6rem;letter-spacing:0.12em;
+  text-transform:uppercase;color:var(--ink3);margin-top:0.2rem
+}
+
+/* ── TICKER ── */
+.ticker{
+  overflow:hidden;background:var(--rust);padding:0.75rem 0
+}
+.ticker-inner{
+  display:flex;gap:0;animation:ticker 18s linear infinite;white-space:nowrap
+}
+.ti{
+  font-family:var(--serif);font-size:1rem;font-style:italic;
+  color:rgba(250,247,242,0.9);padding:0 2rem;flex-shrink:0
+}
+.ti-sep{color:rgba(250,247,242,0.4);padding:0}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── SVG ILLUSTRATED SECTION DIVIDER ── */
+.wave-divider{display:block;width:100%;overflow:hidden;line-height:0}
+
+/* ── ABOUT / ILLUSTRATED STRIP ── */
+.about-strip{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  border-top:1px solid var(--warm);
+}
+.about-cell{
+  padding:3.5rem 3rem;border-right:1px solid var(--warm);
+  position:relative;overflow:hidden;
+}
+.about-cell:last-child{border-right:none}
+.about-cell-num{
+  font-family:var(--serif);font-size:5rem;font-weight:900;
+  color:var(--warm);position:absolute;top:-1rem;right:1rem;line-height:1;
+  pointer-events:none;user-select:none
+}
+.about-cell-icon{
+  margin-bottom:1.2rem;color:var(--rust)
+}
+.about-cell-icon svg{width:36px;height:36px;stroke-width:1.3}
+.about-cell h3{
+  font-family:var(--serif);font-size:1.3rem;font-weight:700;
+  margin-bottom:0.6rem;color:var(--ink)
+}
+.about-cell p{
+  font-size:0.82rem;color:var(--ink3);line-height:1.8;font-weight:300
+}
+
+/* ── ILLUSTRATED PORTFOLIO ── */
+.portfolio{background:var(--warm);padding:5rem 4rem}
+.port-head{
+  display:flex;align-items:baseline;justify-content:space-between;
+  margin-bottom:3.5rem;gap:1rem;flex-wrap:wrap
+}
+.port-label{
+  font-family:var(--mono);font-size:0.65rem;letter-spacing:0.2em;
+  text-transform:uppercase;color:var(--rust);margin-bottom:0.5rem
+}
+.port-title{
+  font-family:var(--serif);font-size:clamp(2.5rem,4vw,4rem);
+  font-weight:900;color:var(--ink);letter-spacing:-1px;line-height:1
+}
+.port-sub{
+  font-size:0.82rem;color:var(--ink3);max-width:280px;line-height:1.7;
+  font-weight:300;text-align:right
+}
+
+.port-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  grid-template-rows:auto auto;
+  gap:1.5rem;
+}
+
+.port-card{
+  background:#fff;overflow:hidden;
+  transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.35s ease;
+  cursor:pointer
+}
+.port-card:hover{
+  transform:translateY(-8px) rotate(-0.5deg);
+  box-shadow:8px 16px 40px rgba(26,20,16,0.12)
+}
+.port-card.tall{grid-row:span 2}
+
+/* SVG illustrated thumbnails */
+.port-thumb{
+  width:100%;display:block;
+  position:relative;overflow:hidden
+}
+.port-thumb svg{width:100%;display:block}
+
+.port-info{padding:1.4rem 1.5rem}
+.port-cat{
+  font-family:var(--mono);font-size:0.62rem;letter-spacing:0.15em;
+  text-transform:uppercase;color:var(--rust);margin-bottom:0.3rem
+}
+.port-name{
+  font-family:var(--serif);font-size:1.05rem;font-weight:700;
+  color:var(--ink);margin-bottom:0.3rem
+}
+.port-desc{font-size:0.76rem;color:var(--ink3);line-height:1.65;font-weight:300}
+
+/* ── PROCESS ILLUSTRATED ── */
+.process-section{padding:5rem 4rem;background:var(--cream)}
+.process-flow{
+  display:flex;align-items:flex-start;
+  gap:0;margin-top:3rem;position:relative
+}
+.process-flow::before{
+  content:'';position:absolute;top:2rem;left:2rem;right:2rem;height:1px;
+  background:linear-gradient(90deg,var(--rust),var(--gold),var(--sage),var(--sky));
+  z-index:0
+}
+.proc{
+  flex:1;padding:0 1.5rem;position:relative;z-index:1;text-align:center
+}
+.proc-circle{
+  width:64px;height:64px;border-radius:50%;
+  margin:0 auto 1.2rem;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid currentColor;background:var(--cream);
+  font-family:var(--serif);font-size:1.3rem;font-weight:900;
+  transition:transform 0.3s,background 0.3s;cursor:default
+}
+.proc:hover .proc-circle{transform:scale(1.15);background:currentColor}
+.proc:hover .proc-circle-inner{color:#fff}
+.proc-circle-inner{transition:color 0.3s}
+.proc:nth-child(1) .proc-circle{color:var(--rust)}
+.proc:nth-child(2) .proc-circle{color:var(--gold)}
+.proc:nth-child(3) .proc-circle{color:var(--sage)}
+.proc:nth-child(4) .proc-circle{color:var(--sky)}
+.proc-title{
+  font-family:var(--serif);font-size:1rem;font-weight:700;
+  color:var(--ink);margin-bottom:0.4rem
+}
+.proc-desc{font-size:0.76rem;color:var(--ink3);line-height:1.7;font-weight:300}
+
+/* ── TOOLS ILLUSTRATED ── */
+.tools-section{
+  background:var(--ink);padding:5rem 4rem;
+  position:relative;overflow:hidden
+}
+.tools-bg-text{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-family:var(--serif);font-size:20rem;font-weight:900;
+  color:rgba(250,247,242,0.03);white-space:nowrap;pointer-events:none;
+  letter-spacing:-5px;font-style:italic
+}
+.tools-grid-wrap{display:grid;grid-template-columns:1fr 1fr;gap:4rem;position:relative}
+.tools-label{
+  font-family:var(--mono);font-size:0.65rem;letter-spacing:0.2em;
+  text-transform:uppercase;color:var(--rust);margin-bottom:0.75rem
+}
+.tools-title{
+  font-family:var(--serif);font-size:clamp(2rem,3.5vw,3.5rem);
+  font-weight:900;font-style:italic;color:var(--cream);
+  letter-spacing:-1px;line-height:1;margin-bottom:2rem
+}
+.tools-desc{
+  font-size:0.83rem;color:rgba(250,247,242,0.45);line-height:1.8;
+  font-weight:300;max-width:340px
+}
+.tool-badges{display:flex;flex-wrap:wrap;gap:0.6rem;align-content:flex-start}
+.tbadge{
+  display:flex;align-items:center;gap:0.5rem;
+  padding:0.5rem 0.9rem;
+  border:1px solid rgba(250,247,242,0.1);
+  color:rgba(250,247,242,0.6);
+  font-size:0.75rem;letter-spacing:0.06em;
+  transition:all 0.25s;cursor:default
+}
+.tbadge:hover{border-color:var(--rust);color:var(--cream)}
+.tbadge-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--rust);flex-shrink:0;
+  transition:transform 0.25s
+}
+.tbadge:hover .tbadge-dot{transform:scale(1.6)}
+
+/* ── BIG QUOTE ── */
+.quote-section{
+  padding:6rem 4rem;background:var(--cream);
+  display:flex;align-items:center;justify-content:center;
+  border-top:1px solid var(--warm);border-bottom:1px solid var(--warm)
+}
+.quote-inner{text-align:center;max-width:800px}
+.quote-mark{
+  font-family:var(--serif);font-size:6rem;color:var(--rust);
+  line-height:0.5;display:block;margin-bottom:1rem;opacity:0.4
+}
+.quote-text{
+  font-family:var(--serif);font-size:clamp(1.6rem,3vw,2.8rem);
+  font-weight:700;font-style:italic;color:var(--ink);
+  line-height:1.3;letter-spacing:-0.5px;margin-bottom:1.5rem
+}
+.quote-attr{
+  font-family:var(--mono);font-size:0.68rem;letter-spacing:0.15em;
+  text-transform:uppercase;color:var(--ink3)
+}
+
+/* ── CTA ── */
+.cta{
+  display:grid;grid-template-columns:1fr 1fr;
+  min-height:45vh;
+}
+.cta-left{
+  background:var(--rust);
+  display:flex;flex-direction:column;justify-content:center;
+  padding:5rem 4rem;position:relative;overflow:hidden
+}
+.cta-bg-circle{
+  position:absolute;width:400px;height:400px;border-radius:50%;
+  border:1px solid rgba(250,247,242,0.15);
+  top:50%;left:50%;transform:translate(-50%,-50%)
+}
+.cta-bg-circle2{
+  position:absolute;width:600px;height:600px;border-radius:50%;
+  border:1px solid rgba(250,247,242,0.07);
+  top:50%;left:50%;transform:translate(-50%,-50%)
+}
+.cta-tag{
+  font-family:var(--mono);font-size:0.65rem;letter-spacing:0.18em;
+  text-transform:uppercase;color:rgba(250,247,242,0.6);margin-bottom:1rem;
+  position:relative
+}
+.cta-left h2{
+  font-family:var(--serif);font-size:clamp(2.5rem,5vw,4.5rem);
+  font-weight:900;color:#fff;line-height:0.95;
+  letter-spacing:-1px;margin-bottom:1.5rem;position:relative
+}
+.cta-left p{
+  font-size:0.85rem;color:rgba(250,247,242,0.6);line-height:1.8;
+  max-width:300px;font-weight:300;position:relative
+}
+.cta-right{
+  background:var(--ink);
+  display:flex;flex-direction:column;justify-content:center;
+  padding:5rem 4rem;gap:1.5rem
+}
+.contact-line{
+  display:flex;flex-direction:column;gap:0.2rem;
+  border-bottom:1px solid rgba(250,247,242,0.08);
+  padding-bottom:1.5rem
+}
+.contact-label{
+  font-family:var(--mono);font-size:0.6rem;letter-spacing:0.15em;
+  text-transform:uppercase;color:var(--rust)
+}
+.contact-val{
+  font-family:var(--serif);font-size:1.15rem;font-weight:700;
+  font-style:italic;color:var(--cream);text-decoration:none;
+  transition:color 0.2s
+}
+.contact-val:hover{color:var(--rust2)}
+.cta-btns{display:flex;gap:0.75rem;margin-top:0.5rem;flex-wrap:wrap}
+.btn-rust{
+  display:inline-block;font-family:var(--mono);font-size:0.7rem;
+  letter-spacing:0.1em;text-transform:uppercase;
+  padding:0.8rem 1.8rem;background:var(--rust);color:#fff;
+  text-decoration:none;transition:all 0.2s
+}
+.btn-rust:hover{background:var(--rust2)}
+.btn-ghost-w{
+  display:inline-block;font-family:var(--mono);font-size:0.7rem;
+  letter-spacing:0.1em;text-transform:uppercase;
+  padding:0.8rem 1.8rem;border:1px solid rgba(250,247,242,0.2);
+  color:rgba(250,247,242,0.6);text-decoration:none;transition:all 0.2s
+}
+.btn-ghost-w:hover{border-color:var(--rust);color:var(--rust)}
+
+/* ── FOOTER ── */
+footer{
+  background:var(--ink);padding:1.5rem 4rem;
+  display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid rgba(250,247,242,0.07);flex-wrap:wrap;gap:1rem
+}
+.foot-brand{
+  font-family:var(--serif);font-size:1rem;font-weight:900;
+  font-style:italic;color:rgba(250,247,242,0.9)
+}
+.foot-brand span{color:var(--rust);font-style:normal}
+.foot-copy{
+  font-family:var(--mono);font-size:0.62rem;letter-spacing:0.08em;
+  color:rgba(250,247,242,0.25)
+}
+
+/* ── SCROLL FADE ── */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity 0.8s ease,transform 0.8s ease}
+.reveal.on{opacity:1;transform:translateY(0)}
+.reveal-d1{transition-delay:0.1s}.reveal-d2{transition-delay:0.2s}
+.reveal-d3{transition-delay:0.3s}.reveal-d4{transition-delay:0.4s}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  nav{padding:1rem 1.5rem}
+  .nav-links{display:none}
+  .hero{grid-template-columns:1fr}
+  .hero-left{min-height:60vh;padding:7rem 1.5rem 3rem}
+  .hero-right{padding:3rem 1.5rem}
+  .hero-stat-box{display:none}
+  .about-strip{grid-template-columns:1fr}
+  .about-cell{border-right:none;border-bottom:1px solid var(--warm)}
+  .portfolio{padding:4rem 1.5rem}
+  .port-grid{grid-template-columns:1fr}
+  .port-card.tall{grid-row:span 1}
+  .process-section{padding:4rem 1.5rem}
+  .process-flow{flex-direction:column;gap:2rem}
+  .process-flow::before{display:none}
+  .tools-section{padding:4rem 1.5rem}
+  .tools-grid-wrap{grid-template-columns:1fr}
+  .cta{grid-template-columns:1fr}
+  footer{flex-direction:column;align-items:flex-start}
+  .quote-section{padding:4rem 1.5rem}
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo"><em>Prism</em> <span>Studio</span></a>
+  <ul class="nav-links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#tools">Tools</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <!-- LEFT DARK PANEL -->
+  <div class="hero-left">
+    <!-- BIG ABSTRACT SVG ILLUSTRATION -->
+    <div class="hero-illustration">
+      <svg viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+        <circle cx="250" cy="250" r="200" stroke="white" stroke-width="0.5"/>
+        <circle cx="250" cy="250" r="150" stroke="white" stroke-width="0.5"/>
+        <circle cx="250" cy="250" r="100" stroke="white" stroke-width="0.5"/>
+        <circle cx="250" cy="250" r="50" stroke="white" stroke-width="0.5"/>
+        <line x1="50" y1="250" x2="450" y2="250" stroke="white" stroke-width="0.5"/>
+        <line x1="250" y1="50" x2="250" y2="450" stroke="white" stroke-width="0.5"/>
+        <line x1="108" y1="108" x2="392" y2="392" stroke="white" stroke-width="0.5"/>
+        <line x1="392" y1="108" x2="108" y2="392" stroke="white" stroke-width="0.5"/>
+        <polygon points="250,80 390,360 110,360" stroke="#c0390a" stroke-width="1" fill="none"/>
+        <circle cx="250" cy="250" r="8" fill="#c0390a" opacity="0.8"/>
+        <circle cx="250" cy="80" r="4" fill="white" opacity="0.6"/>
+        <circle cx="390" cy="360" r="4" fill="white" opacity="0.6"/>
+        <circle cx="110" cy="360" r="4" fill="white" opacity="0.6"/>
+        <circle cx="50" cy="250" r="3" fill="white" opacity="0.4"/>
+        <circle cx="450" cy="250" r="3" fill="white" opacity="0.4"/>
+      </svg>
+    </div>
+    <h1>We Make<br><em>Brands</em><br>Shine.</h1>
+    <p>Graphic design that tells your story — bold, beautiful, and built to be remembered.</p>
+  </div>
+
+  <!-- RIGHT LIGHT PANEL -->
+  <div class="hero-right">
+    <div class="hero-right-tag">Design Studio · Est. 2020</div>
+    <div class="service-pills">
+      <div class="pill"><span class="pill-dot"></span>Brand Identity</div>
+      <div class="pill"><span class="pill-dot"></span>Logo Design</div>
+      <div class="pill"><span class="pill-dot"></span>Print & Packaging</div>
+      <div class="pill"><span class="pill-dot"></span>Social Media Graphics</div>
+      <div class="pill"><span class="pill-dot"></span>UI / Visual Design</div>
+    </div>
+    <div class="hero-cta-row">
+      <a href="#work" class="btn-fill">See Our Work</a>
+      <a href="#contact" class="btn-text">Get a Quote →</a>
+    </div>
+
+    <!-- floating stats -->
+    <div class="hero-stat-box hsb1">
+      <div class="stat-big">120+</div>
+      <div class="stat-small">Projects Done</div>
+    </div>
+    <div class="hero-stat-box hsb2">
+      <div class="stat-big">98%</div>
+      <div class="stat-small">Happy Clients</div>
+    </div>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <span class="ti">Brand Identity</span><span class="ti ti-sep"> ✦ </span>
+    <span class="ti">Logo Design</span><span class="ti ti-sep"> ✦ </span>
+    <span class="ti">Poster Design</span><span class="ti ti-sep"> ✦ </span>
+    <span class="ti">Packaging</span><span class="ti ti-sep"> ✦ </span>
+    <span class="ti">Social Media</span><span class="ti ti-sep"> ✦ </span>
+    <span class="ti">Typography</span><span class="ti ti-sep"> ✦ </span>
+    <span class="ti">Print Design</span><span class="ti ti-sep"> ✦ </span>
+    <span class="ti">Brand Identity</span><span class="ti ti-sep"> ✦ </span>
+    <span class="ti">Logo Design</span><span class="ti ti-sep"> ✦ </span>
+    <span class="ti">Poster Design</span><span class="ti ti-sep"> ✦ </span>
+    <span class="ti">Packaging</span><span class="ti ti-sep"> ✦ </span>
+    <span class="ti">Social Media</span><span class="ti ti-sep"> ✦ </span>
+    <span class="ti">Typography</span><span class="ti ti-sep"> ✦ </span>
+    <span class="ti">Print Design</span><span class="ti ti-sep"> ✦ </span>
+  </div>
+</div>
+
+<!-- ABOUT STRIP -->
+<div class="about-strip">
+  <div class="about-cell reveal">
+    <div class="about-cell-num">01</div>
+    <div class="about-cell-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    </div>
+    <h3>Distinctive Work</h3>
+    <p>Every project starts with understanding your brand at its core — then we design something no one else could have made.</p>
+  </div>
+  <div class="about-cell reveal reveal-d1">
+    <div class="about-cell-num">02</div>
+    <div class="about-cell-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+    </div>
+    <h3>Client First</h3>
+    <p>We listen before we design. Clear communication, honest timelines, and revisions until you're genuinely happy.</p>
+  </div>
+  <div class="about-cell reveal reveal-d2">
+    <div class="about-cell-num">03</div>
+    <div class="about-cell-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    </div>
+    <h3>Fast Delivery</h3>
+    <p>Most projects delivered in 3–7 days. Rush options available. No waiting months for a logo.</p>
+  </div>
+</div>
+
+<!-- PORTFOLIO -->
+<section id="work" class="portfolio">
+  <div class="port-head reveal">
+    <div>
+      <div class="port-label">Selected Work</div>
+      <div class="port-title">Our Best<br>Projects.</div>
+    </div>
+    <p class="port-sub">A mix of brand identities, print work, and digital design — all made with intention.</p>
+  </div>
+
+  <div class="port-grid">
+
+    <!-- Card 1: tall — Brand Identity -->
+    <div class="port-card tall reveal">
+      <div class="port-thumb">
+        <svg viewBox="0 0 400 520" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="520" fill="#1a0f08"/>
+          <!-- background grid -->
+          <line x1="0" y1="130" x2="400" y2="130" stroke="#2a1a10" stroke-width="1"/>
+          <line x1="0" y1="260" x2="400" y2="260" stroke="#2a1a10" stroke-width="1"/>
+          <line x1="0" y1="390" x2="400" y2="390" stroke="#2a1a10" stroke-width="1"/>
+          <line x1="100" y1="0" x2="100" y2="520" stroke="#2a1a10" stroke-width="1"/>
+          <line x1="200" y1="0" x2="200" y2="520" stroke="#2a1a10" stroke-width="1"/>
+          <line x1="300" y1="0" x2="300" y2="520" stroke="#2a1a10" stroke-width="1"/>
+          <!-- big circle -->
+          <circle cx="200" cy="240" r="160" stroke="#c0390a" stroke-width="1.5" fill="none" opacity="0.5"/>
+          <circle cx="200" cy="240" r="100" stroke="#c0390a" stroke-width="1" fill="none" opacity="0.3"/>
+          <!-- Logo mark: stylised P -->
+          <rect x="150" y="170" width="12" height="140" fill="#faf7f2"/>
+          <path d="M162 170 Q230 170 230 210 Q230 250 162 250" stroke="#faf7f2" stroke-width="12" fill="none" stroke-linecap="round"/>
+          <!-- brand name -->
+          <text x="200" y="360" font-family="serif" font-size="18" fill="#faf7f2" text-anchor="middle" letter-spacing="8" opacity="0.8">PRISM</text>
+          <text x="200" y="385" font-family="monospace" font-size="9" fill="#c0390a" text-anchor="middle" letter-spacing="4">STUDIO</text>
+          <!-- bottom accent -->
+          <rect x="0" y="510" width="400" height="4" fill="#c0390a"/>
+          <!-- corner dots -->
+          <circle cx="20" cy="20" r="3" fill="#c0390a" opacity="0.6"/>
+          <circle cx="380" cy="20" r="3" fill="#c0390a" opacity="0.6"/>
+          <circle cx="20" cy="500" r="3" fill="#c0390a" opacity="0.6"/>
+          <circle cx="380" cy="500" r="3" fill="#c0390a" opacity="0.6"/>
+        </svg>
+      </div>
+      <div class="port-info">
+        <div class="port-cat">Brand Identity</div>
+        <div class="port-name">Prism — Full Brand System</div>
+        <div class="port-desc">Logo, typeface pairing, colour palette, stationery suite & usage guidelines for a creative agency.</div>
+      </div>
+    </div>
+
+    <!-- Card 2: normal — Poster -->
+    <div class="port-card reveal reveal-d1">
+      <div class="port-thumb">
+        <svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="320" fill="#0a1a14"/>
+          <!-- abstract leaf/nature shapes -->
+          <ellipse cx="200" cy="160" rx="140" ry="100" stroke="#3a6b50" stroke-width="1" fill="none" opacity="0.4"/>
+          <ellipse cx="200" cy="160" rx="100" ry="70" stroke="#3a6b50" stroke-width="1" fill="none" opacity="0.3"/>
+          <!-- botanical illustration lines -->
+          <path d="M200 260 Q170 200 150 150 Q130 100 160 70" stroke="#3a6b50" stroke-width="1.5" fill="none"/>
+          <path d="M160 120 Q130 110 110 90" stroke="#3a6b50" stroke-width="1" fill="none" opacity="0.6"/>
+          <path d="M155 140 Q120 140 100 120" stroke="#3a6b50" stroke-width="1" fill="none" opacity="0.6"/>
+          <path d="M152 165 Q115 175 100 160" stroke="#3a6b50" stroke-width="1" fill="none" opacity="0.6"/>
+          <path d="M200 260 Q230 200 250 150 Q270 100 240 70" stroke="#3a6b50" stroke-width="1.5" fill="none"/>
+          <path d="M240 120 Q270 110 290 90" stroke="#3a6b50" stroke-width="1" fill="none" opacity="0.6"/>
+          <path d="M245 140 Q280 140 300 120" stroke="#3a6b50" stroke-width="1" fill="none" opacity="0.6"/>
+          <!-- text -->
+          <text x="200" y="155" font-family="serif" font-size="28" fill="#faf7f2" text-anchor="middle" font-style="italic" opacity="0.9">Bloom</text>
+          <text x="200" y="180" font-family="monospace" font-size="8" fill="#3a6b50" text-anchor="middle" letter-spacing="5">BOTANICAL SPA</text>
+          <!-- gold accent line -->
+          <line x1="160" y1="190" x2="240" y2="190" stroke="#d4900a" stroke-width="0.8" opacity="0.8"/>
+        </svg>
+      </div>
+      <div class="port-info">
+        <div class="port-cat">Logo Design</div>
+        <div class="port-name">Bloom Botanical Spa</div>
+        <div class="port-desc">Organic illustrative logo with custom botanical elements for a wellness brand.</div>
+      </div>
+    </div>
+
+    <!-- Card 3: normal — Social Media -->
+    <div class="port-card reveal reveal-d2">
+      <div class="port-thumb">
+        <svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="320" fill="#0a0e1a"/>
+          <!-- geometric background -->
+          <polygon points="0,320 200,0 400,320" stroke="#1a4a7a" stroke-width="1" fill="none" opacity="0.3"/>
+          <polygon points="50,320 200,50 350,320" stroke="#1a4a7a" stroke-width="1" fill="none" opacity="0.4"/>
+          <!-- grid of post mockups -->
+          <rect x="30" y="40" width="100" height="100" fill="#1a2a4a" rx="4"/>
+          <rect x="150" y="40" width="100" height="100" fill="#162038" rx="4"/>
+          <rect x="270" y="40" width="100" height="100" fill="#1a2a4a" rx="4"/>
+          <rect x="30" y="160" width="100" height="100" fill="#162038" rx="4"/>
+          <rect x="150" y="160" width="100" height="100" fill="#1a4a7a" rx="4" opacity="0.8"/>
+          <rect x="270" y="160" width="100" height="100" fill="#162038" rx="4"/>
+          <!-- diagonal accent -->
+          <line x1="0" y1="320" x2="400" y2="0" stroke="#1a4a7a" stroke-width="0.5" opacity="0.4"/>
+          <!-- highlight post -->
+          <rect x="150" y="160" width="100" height="100" fill="none" rx="4" stroke="#1a4a7a" stroke-width="2"/>
+          <text x="200" y="215" font-family="serif" font-size="11" fill="#faf7f2" text-anchor="middle" opacity="0.8" font-style="italic">Post</text>
+          <!-- label -->
+          <text x="200" y="295" font-family="monospace" font-size="8" fill="#1a4a7a" text-anchor="middle" letter-spacing="4">SOCIAL PACK</text>
+        </svg>
+      </div>
+      <div class="port-info">
+        <div class="port-cat">Social Media</div>
+        <div class="port-name">Azure — Instagram Kit</div>
+        <div class="port-desc">24-piece Canva template set with stories, posts, and highlights covers for a fashion brand.</div>
+      </div>
+    </div>
+
+    <!-- Card 4: normal — Packaging -->
+    <div class="port-card reveal reveal-d1">
+      <div class="port-thumb">
+        <svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="320" fill="#1a1508"/>
+          <!-- isometric box illustration -->
+          <!-- front face -->
+          <polygon points="130,100 270,100 270,240 130,240" fill="#2a2010" stroke="#d4900a" stroke-width="1"/>
+          <!-- top face -->
+          <polygon points="130,100 200,60 340,60 270,100" fill="#3a3015" stroke="#d4900a" stroke-width="1"/>
+          <!-- side face -->
+          <polygon points="270,100 340,60 340,200 270,240" fill="#1a1208" stroke="#d4900a" stroke-width="1"/>
+          <!-- label on front -->
+          <rect x="150" y="130" width="100" height="80" fill="#faf7f2" opacity="0.06" rx="2"/>
+          <!-- decorative lines on label -->
+          <line x1="155" y1="150" x2="245" y2="150" stroke="#d4900a" stroke-width="0.5" opacity="0.7"/>
+          <line x1="155" y1="175" x2="245" y2="175" stroke="#d4900a" stroke-width="0.5" opacity="0.4"/>
+          <text x="200" y="165" font-family="serif" font-size="12" fill="#d4900a" text-anchor="middle" font-style="italic">Luxe</text>
+          <text x="200" y="183" font-family="monospace" font-size="6" fill="#faf7f2" text-anchor="middle" letter-spacing="3" opacity="0.5">PREMIUM</text>
+          <!-- shine line on top -->
+          <line x1="155" y1="75" x2="225" y2="75" stroke="#faf7f2" stroke-width="0.5" opacity="0.2"/>
+        </svg>
+      </div>
+      <div class="port-info">
+        <div class="port-cat">Packaging Design</div>
+        <div class="port-name">Luxe — Product Box</div>
+        <div class="port-desc">Premium unboxing-first packaging design with foil stamp label, structural dieline, and print specs.</div>
+      </div>
+    </div>
+
+    <!-- Card 5: normal — Poster -->
+    <div class="port-card reveal reveal-d2">
+      <div class="port-thumb">
+        <svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="320" fill="#150a1a"/>
+          <!-- abstract concentric arcs -->
+          <path d="M200 400 A200 200 0 0 1 0 200" stroke="#b03060" stroke-width="1" fill="none" opacity="0.25"/>
+          <path d="M200 400 A160 160 0 0 1 40 240" stroke="#b03060" stroke-width="1" fill="none" opacity="0.35"/>
+          <path d="M200 400 A120 120 0 0 1 80 280" stroke="#b03060" stroke-width="1" fill="none" opacity="0.45"/>
+          <path d="M200 400 A80 80 0 0 1 120 320" stroke="#b03060" stroke-width="1" fill="none" opacity="0.6"/>
+          <path d="M200 320 A60 60 0 1 1 200 321" stroke="#b03060" stroke-width="1" fill="#b03060" opacity="0.15"/>
+          <!-- large text -->
+          <text x="60" y="120" font-family="serif" font-size="58" fill="#faf7f2" font-weight="900" opacity="0.9" letter-spacing="-2">NOVA</text>
+          <text x="60" y="160" font-family="serif" font-size="58" fill="none" font-weight="900" stroke="#b03060" stroke-width="1" letter-spacing="-2">NOVA</text>
+          <text x="60" y="195" font-family="monospace" font-size="8" fill="#b03060" letter-spacing="6">MUSIC FESTIVAL 2026</text>
+          <line x1="60" y1="205" x2="340" y2="205" stroke="#b03060" stroke-width="0.5" opacity="0.6"/>
+          <text x="60" y="225" font-family="monospace" font-size="8" fill="rgba(250,247,242,0.4)" letter-spacing="3">APRIL 18–20 · DELHI</text>
+        </svg>
+      </div>
+      <div class="port-info">
+        <div class="port-cat">Poster Design</div>
+        <div class="port-name">Nova Music Festival</div>
+        <div class="port-desc">Bold typographic poster series with layered text treatment for a live music event.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- QUOTE -->
+<div class="quote-section reveal">
+  <div class="quote-inner">
+    <span class="quote-mark">"</span>
+    <p class="quote-text">Good design is not just what looks good — it's what works, what sells, and what people remember long after they've seen it.</p>
+    <div class="quote-attr">— Design Philosophy, Prism Studio</div>
+  </div>
+</div>
+
+<!-- PROCESS -->
+<section id="process" class="process-section">
+  <div class="section-head reveal">
+    <div class="section-label">How It Works</div>
+    <div class="section-title">The Four-Step<br>Process.</div>
+  </div>
+  <div class="process-flow">
+    <div class="proc reveal">
+      <div class="proc-circle"><span class="proc-circle-inner">1</span></div>
+      <div class="proc-title">Brief</div>
+      <p class="proc-desc">Tell us about your project — goals, audience, vibe. We ask sharp questions and listen carefully.</p>
+    </div>
+    <div class="proc reveal reveal-d1">
+      <div class="proc-circle"><span class="proc-circle-inner">2</span></div>
+      <div class="proc-title">Concept</div>
+      <p class="proc-desc">We develop 2–3 distinct creative directions for you to choose from, with rationale for each.</p>
+    </div>
+    <div class="proc reveal reveal-d2">
+      <div class="proc-circle"><span class="proc-circle-inner">3</span></div>
+      <div class="proc-title">Refine</div>
+      <p class="proc-desc">We perfect the chosen direction — typography, colour, layout — until everything clicks.</p>
+    </div>
+    <div class="proc reveal reveal-d3">
+      <div class="proc-circle"><span class="proc-circle-inner">4</span></div>
+      <div class="proc-title">Deliver</div>
+      <p class="proc-desc">Print-ready & web files, every format, full source files — handed over cleanly with guidelines.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TOOLS -->
+<section id="tools" class="tools-section">
+  <div class="tools-bg-text">Create</div>
+  <div class="tools-grid-wrap">
+    <div class="reveal">
+      <div class="tools-label">The Toolkit</div>
+      <div class="tools-title">Made with<br>the best<br>tools.</div>
+      <p class="tools-desc">We work with industry-standard software to deliver files ready for any use — print, web, or motion.</p>
+    </div>
+    <div class="tool-badges reveal reveal-d1">
+      <div class="tbadge"><span class="tbadge-dot"></span>Adobe Illustrator</div>
+      <div class="tbadge"><span class="tbadge-dot"></span>Adobe Photoshop</div>
+      <div class="tbadge"><span class="tbadge-dot"></span>Adobe InDesign</div>
+      <div class="tbadge"><span class="tbadge-dot"></span>Figma</div>
+      <div class="tbadge"><span class="tbadge-dot"></span>Canva Pro</div>
+      <div class="tbadge"><span class="tbadge-dot"></span>After Effects</div>
+      <div class="tbadge"><span class="tbadge-dot"></span>Adobe XD</div>
+      <div class="tbadge"><span class="tbadge-dot"></span>Affinity Designer</div>
+      <div class="tbadge"><span class="tbadge-dot"></span>Procreate</div>
+      <div class="tbadge"><span class="tbadge-dot"></span>CorelDRAW</div>
+      <div class="tbadge"><span class="tbadge-dot"></span>Lightroom</div>
+      <div class="tbadge"><span class="tbadge-dot"></span>Framer</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA / CONTACT -->
+<div id="contact" class="cta">
+  <div class="cta-left reveal">
+    <div class="cta-bg-circle"></div>
+    <div class="cta-bg-circle2"></div>
+    <div class="cta-tag">Start a project</div>
+    <h2>Let's Build<br>Something<br>Beautiful.</h2>
+    <p>Have a project in mind? We'd love to hear about it. Reach out and let's talk design.</p>
+  </div>
+  <div class="cta-right reveal reveal-d1">
+    <div class="contact-line">
+      <div class="contact-label">Email</div>
+      <a href="mailto:hello@prismstudio.design" class="contact-val">hello@prismstudio.design</a>
+    </div>
+    <div class="contact-line">
+      <div class="contact-label">WhatsApp</div>
+      <a href="#" class="contact-val">+91 98XXX XXXXX</a>
+    </div>
+    <div class="contact-line">
+      <div class="contact-label">Based In</div>
+      <span class="contact-val">Delhi, India</span>
+    </div>
+    <div class="cta-btns">
+      <a href="mailto:hello@prismstudio.design" class="btn-rust">Email Us</a>
+      <a href="#work" class="btn-ghost-w">View Work</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-brand"><em>Prism</em> <span>Studio</span></div>
+  <div class="foot-copy">© 2026 Prism Studio. Graphic Design. All rights reserved.</div>
+</footer>
+
+<script>
+/* cursor */
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+document.addEventListener('mousemove', e => {
+  cur.style.left = e.clientX+'px';
+  cur.style.top = e.clientY+'px';
+  setTimeout(()=>{
+    ring.style.left = e.clientX+'px';
+    ring.style.top = e.clientY+'px';
+  }, 80);
+});
+
+/* reveal on scroll */
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('on') });
+}, {threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+/* hover cursor scale */
+document.querySelectorAll('a, button, .port-card, .pill, .tbadge, .svc').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cur.style.width='28px'; cur.style.height='28px'; cur.style.background='rgba(192,57,10,0.4)';
+  });
+  el.addEventListener('mouseleave', () => {
+    cur.style.width='12px'; cur.style.height='12px'; cur.style.background='var(--rust)';
+  });
+});
+</script>
+
+</body>
+</html>
